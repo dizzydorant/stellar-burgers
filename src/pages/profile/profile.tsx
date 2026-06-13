@@ -19,11 +19,13 @@ export const Profile: FC = () => {
   });
 
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
-    }));
+    if (user) {
+      setFormValue({
+        name: user.name,
+        email: user.email,
+        password: ''
+      });
+    }
   }, [user]);
 
   const isFormChanged =
@@ -33,7 +35,15 @@ export const Profile: FC = () => {
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    dispatch(updateUserThunk(formValue));
+    dispatch(updateUserThunk(formValue))
+      .unwrap()
+      .then(() => {
+        setFormValue((prevState) => ({
+          ...prevState,
+          password: ''
+        }));
+      })
+      .catch((err) => console.error(err));
   };
 
   const handleCancel = (e: SyntheticEvent) => {
