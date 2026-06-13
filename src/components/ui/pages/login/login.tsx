@@ -42,6 +42,7 @@ export const LoginUI: FC<LoginUIProps> = ({
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               name='password'
+              onBlur={(e) => e.stopPropagation()}
             />
           </div>
           <div className={`pb-6 ${styles.button}`}>

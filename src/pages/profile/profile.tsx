@@ -7,14 +7,11 @@ import { selectUser } from '../../services/users/user-slice';
 
 export const Profile: FC = () => {
   const dispatch = useDispatch();
-
-  /** TODO: взять переменную из стора */
   const user = useSelector(selectUser);
-  if (!user) return null;
 
   const [formValue, setFormValue] = useState<Partial<TRegisterData>>({
-    name: user.name,
-    email: user.email,
+    name: user?.name || '',
+    email: user?.email || '',
     password: ''
   });
 
@@ -28,22 +25,31 @@ export const Profile: FC = () => {
     }
   }, [user]);
 
+  if (!user) return null;
+
+  const isPasswordValid = !formValue.password || formValue.password.length >= 6;
+
   const isFormChanged =
-    formValue.name !== user?.name ||
-    formValue.email !== user?.email ||
-    !!formValue.password;
+    formValue.name !== user.name ||
+    formValue.email !== user.email ||
+    (!!formValue.password && formValue.password.trim().length > 0);
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    dispatch(updateUserThunk(formValue))
-      .unwrap()
-      .then(() => {
-        setFormValue((prevState) => ({
-          ...prevState,
-          password: ''
-        }));
+
+    dispatch(
+      updateUserThunk({
+        name: formValue.name || user.name,
+        email: formValue.email || user.email,
+        password: formValue.password || ''
       })
-      .catch((err) => console.error(err));
+    ).then(() => {
+      setFormValue({
+        name: formValue.name || user.name,
+        email: formValue.email || user.email,
+        password: ''
+      });
+    });
   };
 
   const handleCancel = (e: SyntheticEvent) => {
