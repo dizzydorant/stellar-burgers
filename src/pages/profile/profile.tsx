@@ -7,33 +7,43 @@ import { selectUser } from '../../services/users/user-slice';
 
 export const Profile: FC = () => {
   const dispatch = useDispatch();
-
-  /** TODO: взять переменную из стора */
   const user = useSelector(selectUser);
-  if (!user) return null;
 
   const [formValue, setFormValue] = useState<Partial<TRegisterData>>({
-    name: user.name,
-    email: user.email,
+    name: user?.name || '',
+    email: user?.email || '',
     password: ''
   });
 
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
-    }));
+    if (user) {
+      setFormValue((prevState) => ({
+        ...prevState,
+        name: user.name,
+        email: user.email
+      }));
+    }
   }, [user]);
 
+  if (!user) return null;
+
   const isFormChanged =
-    formValue.name !== user?.name ||
-    formValue.email !== user?.email ||
+    formValue.name !== user.name ||
+    formValue.email !== user.email ||
     !!formValue.password;
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    dispatch(updateUserThunk(formValue));
+
+    dispatch(
+      updateUserThunk({
+        name: formValue.name || user.name,
+        email: formValue.email || user.email,
+        password: formValue.password || ''
+      })
+    ).then(() => {
+      setFormValue((prevState) => ({ ...prevState, password: '' }));
+    });
   };
 
   const handleCancel = (e: SyntheticEvent) => {
