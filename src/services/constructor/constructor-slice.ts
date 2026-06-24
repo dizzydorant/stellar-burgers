@@ -57,7 +57,7 @@ export const constructorSlice = createSlice({
 
     removeIngredient: (state, action) => {
       state.burger.ingredients = state.burger.ingredients.filter(
-        (ing) => ing._id !== action.payload
+        (ing) => ing.id !== action.payload
       );
       localStorage.setItem(
         'myconstructor_burger',

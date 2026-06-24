@@ -27,10 +27,12 @@ export const Profile: FC = () => {
 
   if (!user) return null;
 
+  const isPasswordValid = !formValue.password || formValue.password.length >= 6;
+
   const isFormChanged =
     formValue.name !== user.name ||
     formValue.email !== user.email ||
-    !!formValue.password;
+    (!!formValue.password && formValue.password.trim().length > 0);
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
