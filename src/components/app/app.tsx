@@ -53,7 +53,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    dispatch(checkUserAuth()).finally(() => dispatch(setIsAuthChecked(true)));
+    dispatch(checkUserAuth())
+      .catch(() => {})
+      .finally(() => dispatch(setIsAuthChecked(true)));
   }, [dispatch]);
 
   useEffect(() => {
